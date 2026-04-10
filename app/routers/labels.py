@@ -140,26 +140,33 @@ def delete_label(
     db: Session = Depends(get_db),
     current_user_id: int = Depends(get_current_user)
 ):
-    label = db.query(models.Label).join(models.BoardMember).filter(
-        models.Label.id == label_id,
-        models.BoardMember.user_id == current_user_id
-    ).first()
+    label = (
+        db.query(models.Label)
+        .join(models.Board, models.Label.board_id == models.Board.id)
+        .join(models.BoardMember, models.Board.id == models.BoardMember.board_id)
+        .filter(
+            models.Label.id == label_id,
+            models.BoardMember.user_id == current_user_id,
+            models.BoardMember.role == "owner"
+        )
+        .first()
+    )
 
     if not label:
-        raise HTTPException(status_code=403, detail="Not authorized to delete label")
+        raise HTTPException(
+            status_code=403,
+            detail="Not authorized to delete label"
+        )
 
     db.query(models.CardLabel).filter(
         models.CardLabel.label_id == label_id
     ).delete()
 
     db.delete(label)
-    db.add(models.ActivityLog(
-        action="Deleted label",
-        user_id=current_user_id
-    ))
     db.commit()
 
     return {"message": "Label deleted successfully"}
+
 
 @router.get("/{card_id}/details", response_model=schemas.CardWithLabelsResponse)
 def get_card_with_labels(
