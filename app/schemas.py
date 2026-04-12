@@ -76,6 +76,8 @@ class ListResponse(ListBase):
         orm_mode = True
         from_attributes = True
 
+class ListMove(BaseModel):
+    position: int
 
 class BoardWithListsResponse(BoardResponse):
     lists: List[ListResponse] = []

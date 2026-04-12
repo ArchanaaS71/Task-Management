@@ -180,3 +180,23 @@ def get_list_with_cards(
         is_archived=list_item.is_archived,
         cards=cards
     )
+
+
+@router.patch("/{list_id}/move")
+def move_list(
+    list_id: int,
+    data: schemas.ListMove,
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user),
+):
+    list_obj = db.query(models.List).filter(
+        models.List.id == list_id
+    ).first()
+
+    if not list_obj:
+        raise HTTPException(status_code=404, detail="List not found")
+
+    list_obj.position = data.position
+    db.commit()
+
+    return {"message": "List reordered successfully"}
