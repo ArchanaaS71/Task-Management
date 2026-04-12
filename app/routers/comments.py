@@ -7,6 +7,7 @@ from app import models, schemas
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
+
 @router.post("/", response_model=schemas.CommentResponse)
 def add_comment(
     comment_data: schemas.CommentCreate,
@@ -37,14 +38,17 @@ def add_comment(
     db.commit()
     db.refresh(new_comment)
 
-    db.add(models.ActivityLog(
-        action="Added comment",
-        card_id=comment_data.card_id,
-        user_id=current_user_id
-    ))
+    db.add(
+        models.ActivityLog(
+            action="Added comment",
+            card_id=comment_data.card_id,
+            user_id=current_user_id
+        )
+    )
     db.commit()
 
     return new_comment
+
 
 @router.get("/card/{card_id}", response_model=list[schemas.CommentResponse])
 def get_comments_for_card(
@@ -69,11 +73,12 @@ def get_comments_for_card(
     comments = (
         db.query(models.Comment)
         .filter(models.Comment.card_id == card_id)
-        .order_by(models.Comment.created_at.asc())
+        .order_by(models.Comment.created_at.desc())
         .all()
     )
 
     return comments
+
 
 @router.delete("/{comment_id}")
 def delete_comment(
@@ -101,11 +106,13 @@ def delete_comment(
     db.delete(comment)
     db.commit()
 
-    db.add(models.ActivityLog(
-        action="Deleted comment",
-        card_id=card_id,
-        user_id=current_user_id
-    ))
+    db.add(
+        models.ActivityLog(
+            action="Deleted comment",
+            card_id=card_id,
+            user_id=current_user_id
+        )
+    )
     db.commit()
 
     return {"message": "Comment deleted successfully"}

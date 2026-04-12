@@ -72,3 +72,18 @@ def get_activity_for_board(
     )
 
     return logs
+
+@router.get("/card/{card_id}")
+def get_card_activity(
+    card_id: int,
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user),
+):
+    activities = (
+        db.query(models.ActivityLog)
+        .filter(models.ActivityLog.card_id == card_id)
+        .order_by(models.ActivityLog.created_at.desc())
+        .all()
+    )
+
+    return activities

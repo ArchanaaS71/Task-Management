@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -236,3 +238,82 @@ def delete_card(
     db.commit()
 
     return {"message": "Card deleted successfully"}
+
+@router.patch("/{card_id}/description")
+def update_card_description(
+    card_id: int,
+    data: dict,
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user),
+):
+    card = (
+        db.query(models.Card)
+        .join(models.List, models.Card.list_id == models.List.id)
+        .join(models.BoardMember, models.List.board_id == models.BoardMember.board_id)
+        .filter(
+            models.Card.id == card_id,
+            models.BoardMember.user_id == current_user_id
+        )
+        .first()
+    )
+
+    if not card:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    card.description = data.get("description")
+    db.commit()
+
+    db.add(
+        models.ActivityLog(
+            action="Updated description",
+            card_id=card_id,
+            user_id=current_user_id
+        )
+    )
+    db.commit()
+
+    return {"message": "Description updated"}
+
+
+@router.patch("/{card_id}/due-date")
+def update_card_due_date(
+    card_id: int,
+    data: dict,
+    db: Session = Depends(get_db),
+    current_user_id: int = Depends(get_current_user),
+):
+    card = (
+        db.query(models.Card)
+        .join(models.List, models.Card.list_id == models.List.id)
+        .join(models.BoardMember, models.List.board_id == models.BoardMember.board_id)
+        .filter(
+            models.Card.id == card_id,
+            models.BoardMember.user_id == current_user_id
+        )
+        .first()
+    )
+
+    if not card:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    due_date_str = data.get("due_date")
+
+    if due_date_str:
+        card.due_date = datetime.fromisoformat(due_date_str)
+    else:
+        card.due_date = None
+
+    db.add(card)
+    db.commit()
+    db.refresh(card)
+
+    db.add(
+        models.ActivityLog(
+            action="Updated due date",
+            card_id=card_id,
+            user_id=current_user_id
+        )
+    )
+    db.commit()
+
+    return card
