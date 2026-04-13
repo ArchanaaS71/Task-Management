@@ -19,10 +19,9 @@ class Board(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    is_archived = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-"""
+
 class BoardMember(Base):
     __tablename__ = "board_members"
 
@@ -31,7 +30,7 @@ class BoardMember(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     role = Column(String, nullable=False)
     added_at = Column(DateTime, default=datetime.utcnow)
-"""
+
 class List(Base):
     __tablename__ = "lists"
 
@@ -39,7 +38,6 @@ class List(Base):
     title = Column(String, nullable=False)
     position = Column(Integer, nullable=False)
     board_id = Column(Integer, ForeignKey("boards.id"), nullable=False)
-    is_archived = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -52,10 +50,9 @@ class Card(Base):
     position = Column(Integer, nullable=False)
     list_id = Column(Integer, ForeignKey("lists.id"), nullable=False)
     due_date = Column(DateTime, nullable=True)
-
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
- """   
+"""   
 class Label(Base):
     __tablename__ = "labels"
 

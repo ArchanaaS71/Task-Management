@@ -33,8 +33,6 @@ class BoardCreate(BoardBase):
 class BoardUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    is_archived: Optional[bool] = None
-
 
 class BoardResponse(BoardBase):
     id: int
@@ -61,12 +59,9 @@ class ListCreate(ListBase):
 class ListUpdate(BaseModel):
     title: Optional[str] = None
     position: Optional[int] = None
-    is_archived: Optional[bool] = None
-
 
 class ListResponse(ListBase):
     id: int
-    is_archived: bool
 
     class Config:
         orm_mode = True
@@ -99,7 +94,7 @@ class CardUpdate(BaseModel):
     position: Optional[int] = None
     list_id: Optional[int] = None
     due_date: Optional[datetime.datetime] = None
-    reminder_date: Optional[datetime.datetime] = None
+  
 
 
 class CardMove(BaseModel):

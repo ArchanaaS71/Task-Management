@@ -31,9 +31,8 @@ def create_card(
     new_card = models.Card(
         title=card_data.title,
         description=card_data.description,
-        position=card_data.position,
+        position=card_data.position or 1,
         due_date=card_data.due_date,
-        reminder_date=card_data.reminder_date,
         list_id=card_data.list_id
     )
 

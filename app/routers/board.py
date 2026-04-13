@@ -169,7 +169,6 @@ def get_board_with_lists(
         title=board.title,
         description=board.description,
         owner_id=board.owner_id,
-        is_archived=board.is_archived,
         created_at=board.created_at,
         updated_at=board.updated_at,
         lists=lists
