@@ -75,41 +75,7 @@ def get_board(
     return board
 
 
-@router.put("/{board_id}", response_model=schemas.BoardResponse)
-def update_board(
-    board_id: int,
-    board_data: schemas.BoardUpdate,
-    db: Session = Depends(get_db),
-    current_user_id: int = Depends(get_current_user)
-):
-    board = db.query(models.Board).filter(
-        models.Board.id == board_id,
-        models.Board.owner_id == current_user_id
-    ).first()
-
-    if not board:
-        raise HTTPException(status_code=403, detail="Not authorized to update board")
-
-    if board_data.title is not None:
-        board.title = board_data.title
-
-    if board_data.description is not None:
-        board.description = board_data.description
-
-    if board_data.is_archived is not None:
-        board.is_archived = board_data.is_archived
-
-    db.add(models.ActivityLog(
-        action="Updated board",
-        user_id=current_user_id
-    ))
-    db.commit()
-    db.refresh(board)
-
-    return board
-
-
-@router.delete("/{board_id}")
+"""@router.delete("/{board_id}")
 def delete_board(
     board_id: int,
     db: Session = Depends(get_db),
@@ -171,7 +137,7 @@ def add_board_member(
 
     return {"message": "Member added successfully"}
 
-
+"""
 @router.get("/{board_id}/details", response_model=schemas.BoardWithListsResponse)
 def get_board_with_lists(
     board_id: int,

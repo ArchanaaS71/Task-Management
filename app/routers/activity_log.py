@@ -36,7 +36,7 @@ def get_activity_for_card(
     )
 
     return logs
-
+"""
 @router.get("/board/{board_id}", response_model=list[schemas.ActivityResponse])
 def get_activity_for_board(
     board_id: int,
@@ -87,3 +87,4 @@ def get_card_activity(
     )
 
     return activities
+"""

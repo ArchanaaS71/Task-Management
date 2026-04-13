@@ -38,7 +38,7 @@ def create_list(
     db.commit()
 
     return new_list
-
+"""
 @router.get("/board/{board_id}", response_model=list[schemas.ListResponse])
 def get_lists_by_board(
     board_id: int,
@@ -200,3 +200,4 @@ def move_list(
     db.commit()
 
     return {"message": "List reordered successfully"}
+"""

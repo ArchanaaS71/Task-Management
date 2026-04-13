@@ -1,10 +1,11 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.routers.login import get_current_user
 from app import models, schemas
-
+"""
 router = APIRouter(prefix="/labels", tags=["Labels"])
 
 @router.post("/", response_model=schemas.LabelResponse)
@@ -210,3 +211,4 @@ def get_card_with_labels(
         reminder_date=card.reminder_date,
         labels=labels
     )
+"""

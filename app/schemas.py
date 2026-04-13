@@ -38,10 +38,6 @@ class BoardUpdate(BaseModel):
 
 class BoardResponse(BoardBase):
     id: int
-    owner_id: int
-    is_archived: bool
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
 
     class Config:
         orm_mode = True
@@ -92,8 +88,6 @@ class CardBase(BaseModel):
     description: Optional[str] = None
     position: int
     due_date: Optional[datetime.datetime] = None
-    reminder_date: Optional[datetime.datetime] = None
-
 
 class CardCreate(CardBase):
     list_id: int
@@ -128,7 +122,7 @@ class ListWithCardsResponse(ListResponse):
         orm_mode = True
         from_attributes = True
 
-
+"""
 class LabelCreate(BaseModel):
     name: str
     color: str
@@ -158,7 +152,7 @@ class CardWithLabelsResponse(CardResponse):
         orm_mode = True
         from_attributes = True
 
-
+"""
 class CommentCreate(BaseModel):
     content: str
     card_id: int

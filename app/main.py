@@ -8,7 +8,7 @@ from app.routers import (
     lists,
     card,
     comments,
-    labels,
+    #labels,
     activity_log,
     login,
     user
@@ -36,7 +36,7 @@ app.include_router(board.router)
 app.include_router(lists.router)
 app.include_router(card.router)
 app.include_router(comments.router)
-app.include_router(labels.router)
+#app.include_router(labels.router)
 app.include_router(activity_log.router)
 
 models.Base.metadata.create_all(bind=engine)
