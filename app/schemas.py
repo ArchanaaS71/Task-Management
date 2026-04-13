@@ -121,7 +121,6 @@ class CardResponse(CardBase):
         orm_mode = True
         from_attributes = True
 
-
 class ListWithCardsResponse(ListResponse):
     cards: List[CardResponse] = []
 

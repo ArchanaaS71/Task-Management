@@ -209,29 +209,3 @@ def get_board_with_lists(
         lists=lists
     )
 
-@router.patch("/{board_id}/lists/reorder")
-def reorder_lists(
-    board_id: int,
-    data: dict,
-    db: Session = Depends(get_db),
-    current_user_id: int = Depends(get_current_user)
-):
-    list_ids = data.get("list_ids")
-
-    if not list_ids:
-        raise HTTPException(status_code=400, detail="list_ids required")
-
-    lists = (
-        db.query(models.List)
-        .filter(models.List.board_id == board_id)
-        .all()
-    )
-
-    list_map = {l.id: l for l in lists}
-
-    for index, list_id in enumerate(list_ids):
-        if list_id in list_map:
-            list_map[list_id].position = index + 1
-
-    db.commit()
-    return {"message": "Lists reordered successfully"}

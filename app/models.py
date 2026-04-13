@@ -88,3 +88,4 @@ class ActivityLog(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     card_id = Column(Integer, ForeignKey("cards.id"), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+

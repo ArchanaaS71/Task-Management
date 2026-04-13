@@ -50,7 +50,7 @@ def create_card(
 
     return new_card
 
-@router.get("/list/{list_id}", response_model=list[schemas.CardResponse])
+@router.get("/list/{list_id}", response_model=list[schemas.CardWithLabelsResponse])
 def get_cards_by_list(
     list_id: int,
     db: Session = Depends(get_db),
@@ -67,7 +67,7 @@ def get_cards_by_list(
     )
 
     if not list_item:
-        raise HTTPException(status_code=403, detail="Not authorized to view cards")
+        raise HTTPException(status_code=403, detail="Not authorized")
 
     cards = (
         db.query(models.Card)
@@ -76,7 +76,35 @@ def get_cards_by_list(
         .all()
     )
 
-    return cards
+    result = []
+
+    for card in cards:
+        mappings = db.query(models.CardLabel).filter(
+            models.CardLabel.card_id == card.id
+        ).all()
+
+        label_ids = [m.label_id for m in mappings]
+
+        labels = []
+        if label_ids:
+            labels = db.query(models.Label).filter(
+                models.Label.id.in_(label_ids)
+            ).all()
+
+        result.append(
+            schemas.CardWithLabelsResponse(
+                id=card.id,
+                title=card.title,
+                description=card.description,
+                position=card.position,
+                list_id=card.list_id,
+                due_date=card.due_date,
+                reminder_date=card.reminder_date,
+                labels=labels
+            )
+        )
+
+    return result
 
 @router.get("/{card_id}", response_model=schemas.CardResponse)
 def get_card(
@@ -317,3 +345,4 @@ def update_card_due_date(
     db.commit()
 
     return card
+
