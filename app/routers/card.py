@@ -50,24 +50,25 @@ def create_card(
 
     return new_card
 
-@router.get("/list/{list_id}", response_model=list[schemas.CardWithLabelsResponse])
+@router.get("/list/{list_id}", response_model=list[schemas.CardResponse])
 def get_cards_by_list(
     list_id: int,
     db: Session = Depends(get_db),
-    current_user_id: int = Depends(get_current_user)
+    current_user_id: int = Depends(get_current_user),
 ):
+
     list_item = (
         db.query(models.List)
         .join(models.BoardMember, models.List.board_id == models.BoardMember.board_id)
         .filter(
             models.List.id == list_id,
-            models.BoardMember.user_id == current_user_id
+            models.BoardMember.user_id == current_user_id,
         )
         .first()
     )
 
     if not list_item:
-        raise HTTPException(status_code=403, detail="Not authorized")
+        raise HTTPException(status_code=403, detail="Not authorized to view cards")
 
     cards = (
         db.query(models.Card)
@@ -76,35 +77,7 @@ def get_cards_by_list(
         .all()
     )
 
-    result = []
-
-    for card in cards:
-        mappings = db.query(models.CardLabel).filter(
-            models.CardLabel.card_id == card.id
-        ).all()
-
-        label_ids = [m.label_id for m in mappings]
-
-        labels = []
-        if label_ids:
-            labels = db.query(models.Label).filter(
-                models.Label.id.in_(label_ids)
-            ).all()
-
-        result.append(
-            schemas.CardWithLabelsResponse(
-                id=card.id,
-                title=card.title,
-                description=card.description,
-                position=card.position,
-                list_id=card.list_id,
-                due_date=card.due_date,
-                reminder_date=card.reminder_date,
-                labels=labels
-            )
-        )
-
-    return result
+    return cards
 
 @router.get("/{card_id}", response_model=schemas.CardResponse)
 def get_card(
@@ -127,7 +100,7 @@ def get_card(
         raise HTTPException(status_code=404, detail="Card not found")
 
     return card
-
+"""
 @router.put("/{card_id}", response_model=schemas.CardResponse)
 def update_card(
     card_id: int,
@@ -189,7 +162,7 @@ def update_card(
     db.refresh(card)
 
     return card
-
+"""
 @router.patch("/{card_id}/move", response_model=schemas.CardResponse)
 def move_card(
     card_id: int,
